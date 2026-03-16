@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Family Income &amp; Expense Tracker</title>
-    
+
     <!-- External Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
     <!-- Tailwind CSS (via CDN as per request) -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
@@ -24,22 +28,24 @@
                     fontFamily: {
                         "display": ["Inter"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                 },
             },
         }
     </script>
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-    
+
     <!-- Application Logic -->
     <script src="script.js" defer></script>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full z-20">
+        <aside
+            class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full z-20">
             <div class="p-6 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
                     <span class="material-symbols-outlined">account_balance_wallet</span>
@@ -49,37 +55,43 @@
                     <p class="text-xs text-slate-500">Income & Expense</p>
                 </div>
             </div>
-            
+
             <nav class="flex-1 px-4 py-4 space-y-1" id="sidebar-nav">
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold" href="index.html" id="nav-home">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold"
+                    href="index.html" id="nav-home">
                     <span class="material-symbols-outlined">home</span>
                     <span class="text-sm">Home</span>
                 </a>
-                
+
                 <!-- Dynamic Members List Container -->
                 <div id="members-list">
                     <!-- Members will be injected here via JS -->
                 </div>
-                
+
                 <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
-                    <button id="add-member-btn" class="flex items-center gap-3 px-3 py-2 w-full text-slate-500 hover:text-primary transition-colors">
+                    <button id="add-member-btn"
+                        class="flex items-center gap-3 px-3 py-2 w-full text-slate-500 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined">person_add</span>
                         <span class="text-sm font-medium">+ Add Member</span>
                     </button>
                     <!-- Add Member Form (Hidden by default) -->
                     <div id="add-member-form" class="hidden mt-2 px-2">
-                        <input type="text" id="new-member-name" placeholder="Name" class="w-full text-sm px-3 py-2 border rounded-md dark:bg-slate-800 dark:border-slate-700 outline-none focus:border-primary mb-2">
+                        <input type="text" id="new-member-name" placeholder="Name"
+                            class="w-full text-sm px-3 py-2 border rounded-md dark:bg-slate-800 dark:border-slate-700 outline-none focus:border-primary mb-2">
                         <div class="flex gap-2">
-                            <button id="save-member-btn" class="flex-1 bg-primary text-white text-xs py-1.5 rounded hover:bg-primary/90">Save</button>
-                            <button id="cancel-member-btn" class="flex-1 bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-xs py-1.5 rounded hover:bg-slate-300 dark:hover:bg-slate-600">Cancel</button>
+                            <button id="save-member-btn"
+                                class="flex-1 bg-primary text-white text-xs py-1.5 rounded hover:bg-primary/90">Save</button>
+                            <button id="cancel-member-btn"
+                                class="flex-1 bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-xs py-1.5 rounded hover:bg-slate-300 dark:hover:bg-slate-600">Cancel</button>
                         </div>
                     </div>
                 </div>
             </nav>
-            
+
             <div class="p-4 border-t border-slate-200 dark:border-slate-800">
                 <div class="flex items-center gap-3 p-2">
-                    <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-500">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-500">
                         <span class="material-symbols-outlined text-xl">person</span>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -93,30 +105,33 @@
         <!-- Main Content -->
         <main class="flex-1 ml-64 flex flex-col">
             <!-- Header -->
-            <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10">
+            <header
+                class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10">
                 <div class="flex items-center gap-2">
                     <span class="text-lg font-medium text-slate-800 dark:text-white" id="greeting-message">Hey 👋</span>
                 </div>
-                
+
                 <div class="flex items-center gap-4">
                     <div class="flex items-center gap-2 relative group">
-                         <label for="head-of-family-select" class="text-xs text-slate-500 font-medium">Head of Family:</label>
-                         <select id="head-of-family-select" class="bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-sm rounded-lg px-3 py-1.5 outline-none focus:border-primary">
-                             <!-- Options injected via JS -->
-                         </select>
+                        <label for="head-of-family-select" class="text-xs text-slate-500 font-medium">Head of
+                            Family:</label>
+                        <select id="head-of-family-select"
+                            class="bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-sm rounded-lg px-3 py-1.5 outline-none focus:border-primary">
+                            <!-- Options injected via JS -->
+                        </select>
                     </div>
                 </div>
             </header>
 
             <!-- Page Content -->
             <div class="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark relative">
-                
+
                 <!-- Intro & Annual Summary -->
                 <div class="mb-8">
                     <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Family Overview</h2>
                     <p class="text-slate-500 mt-1 font-medium">Financial summary for the entire household.</p>
                 </div>
-                
+
                 <!-- Annual Cards (New) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl shadow-md text-white">
@@ -138,12 +153,14 @@
                 <!-- Monthly Stats Grid -->
                 <div class="flex justify-between items-end mb-8">
                     <div>
-                        <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Monthly Overview</h1>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Monthly Overview
+                        </h1>
                         <p class="text-slate-500 mt-1 text-sm">Monthly financial summary for the entire household.</p>
                     </div>
                     <div>
                         <!-- Month Filter -->
-                        <select id="month-filter" class="bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-sm font-semibold rounded-lg px-4 py-2 outline-none focus:border-primary shadow-sm">
+                        <select id="month-filter"
+                            class="bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-sm font-semibold rounded-lg px-4 py-2 outline-none focus:border-primary shadow-sm">
                             <option value="0">January</option>
                             <option value="1">February</option>
                             <option value="2">March</option>
@@ -162,7 +179,8 @@
 
                 <!-- Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1 duration-300">
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1 duration-300">
                         <div class="flex justify-between items-start mb-4">
                             <div class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600">
                                 <span class="material-symbols-outlined">trending_up</span>
@@ -171,8 +189,9 @@
                         <p class="text-slate-500 text-sm font-medium mb-1">Total Monthly Income</p>
                         <h3 class="text-3xl font-black text-emerald-600 tracking-tight" id="total-income">₹0</h3>
                     </div>
-                    
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1 duration-300">
+
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1 duration-300">
                         <div class="flex justify-between items-start mb-4">
                             <div class="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-lg text-rose-600">
                                 <span class="material-symbols-outlined">trending_down</span>
@@ -186,25 +205,33 @@
                 <!-- Visual Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Spending Distribution & Category Summary -->
-                    <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 dark:border-slate-800">
-                            <h4 class="font-bold text-lg text-slate-800 dark:text-white">Family Spending Distribution</h4>
-                            <span class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full font-medium">By Member</span>
+                    <div
+                        class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div
+                            class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 dark:border-slate-800">
+                            <h4 class="font-bold text-lg text-slate-800 dark:text-white">Family Spending Distribution
+                            </h4>
+                            <span
+                                class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full font-medium">By
+                                Member</span>
                         </div>
-                        
+
                         <div class="flex flex-col md:flex-row items-center justify-center gap-12 py-4">
                             <!-- SVG Pie Chart Representation (Dynamic) -->
                             <div class="relative w-48 h-48" id="pie-chart-container">
                                 <!-- JS will compute and render SVG circles here -->
-                                <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36" id="spending-pie-chart">
-                                    <circle cx="18" cy="18" fill="transparent" r="16" stroke="#f1f5f9" stroke-width="4" class="dark:stroke-slate-800"></circle>
+                                <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36"
+                                    id="spending-pie-chart">
+                                    <circle cx="18" cy="18" fill="transparent" r="16" stroke="#f1f5f9" stroke-width="4"
+                                        class="dark:stroke-slate-800"></circle>
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-xl font-black text-slate-800 dark:text-white" id="pie-total-expense">₹0</span>
+                                    <span class="text-xl font-black text-slate-800 dark:text-white"
+                                        id="pie-total-expense">₹0</span>
                                     <span class="text-[10px] uppercase text-slate-500 font-bold">Total</span>
                                 </div>
                             </div>
-                            
+
                             <!-- Member Spending List -->
                             <div class="w-full max-w-sm space-y-0 relative">
                                 <h5 class="text-sm font-bold text-slate-800 mb-3 ml-2">Spending by Member</h5>
@@ -216,16 +243,20 @@
                     </div>
 
                     <!-- Category Breakdown Card -->
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
-                        <h4 class="font-bold text-lg text-slate-800 dark:text-white mb-6 border-b border-slate-100 pb-4 dark:border-slate-800">Expenses by Category</h4>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                        <h4
+                            class="font-bold text-lg text-slate-800 dark:text-white mb-6 border-b border-slate-100 pb-4 dark:border-slate-800">
+                            Expenses by Category</h4>
                         <div class="space-y-3 flex-1 overflow-y-auto" id="category-summary-list">
                             <!-- Populated by JS -->
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </main>
     </div>
 </body>
+
 </html>

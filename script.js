@@ -23,7 +23,7 @@ const defaultData = {
 
 // --- State ---
 let appData = null;
-let currentMonth = new Date().getMonth(); 
+let currentMonth = new Date().getMonth();
 let currentPage = document.body.dataset.page || 'home';
 let currentMemberId = null;
 let editingTransactionId = null;
@@ -35,7 +35,7 @@ function init() {
         appData = defaultData;
         saveData();
     }
-    
+
     // Parse URL params for member page
     if (currentPage === 'member') {
         const urlParams = new URLSearchParams(window.location.search);
@@ -65,7 +65,7 @@ function saveData() {
 function renderAll() {
     renderSidebarMembers();
     renderHeader();
-    
+
     if (currentPage === 'home') {
         renderDashboard();
     } else if (currentPage === 'member') {
@@ -90,12 +90,12 @@ function renderSidebarMembers() {
     appData.members.forEach((member) => {
         const a = document.createElement('a');
         a.href = `member.html?id=${member.id}`;
-        
+
         const isActive = (currentPage === 'member' && currentMemberId === member.id);
-        a.className = isActive 
-            ? 'flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold relative group' 
+        a.className = isActive
+            ? 'flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold relative group'
             : 'flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative group';
-            
+
         a.innerHTML = `
             <span class="material-symbols-outlined" ${isActive ? 'style="font-variation-settings: \'FILL\' 1"' : ''}>person</span>
             <span class="text-sm flex-1 truncate">${member.name}</span>
@@ -116,10 +116,10 @@ function renderHeader() {
     const headSelect = document.getElementById('head-of-family-select');
     const greetingMsg = document.getElementById('greeting-message');
     const headDisplay = document.querySelector('.head-of-family-name-display');
-    
+
     // Find Head
     const headOfFamily = appData.members.find(m => m.isHead) || appData.members[0];
-    
+
     if (headOfFamily) {
         if (greetingMsg) greetingMsg.innerHTML = `Hey ${headOfFamily.name} 👋`;
         if (headDisplay) headDisplay.innerText = headOfFamily.name;
@@ -139,7 +139,7 @@ function renderHeader() {
 
 function renderDashboard() {
     const currentYear = new Date().getFullYear();
-    
+
     // 0. Calculate Annual Totals (All transactions matching current year)
     // Note: the appData.transactions currently only stores `date` (YYYY-MM-DD), so we get year from that.
     const yearTx = appData.transactions.filter(t => new Date(t.date).getFullYear() === currentYear);
@@ -148,15 +148,15 @@ function renderDashboard() {
 
     const annualIncEl = document.getElementById('annual-total-income');
     const annualExpEl = document.getElementById('annual-total-expense');
-    if(annualIncEl) annualIncEl.innerText = `₹${annualIncome.toLocaleString()}`;
-    if(annualExpEl) annualExpEl.innerText = `₹${annualExpense.toLocaleString()}`;
+    if (annualIncEl) annualIncEl.innerText = `₹${annualIncome.toLocaleString()}`;
+    if (annualExpEl) annualExpEl.innerText = `₹${annualExpense.toLocaleString()}`;
 
     // 1. Filter transactions by current month & year
     const monthTx = appData.transactions.filter(t => {
         const txDate = new Date(t.date);
         return t.month === currentMonth && txDate.getFullYear() === currentYear;
     });
-    
+
     // 2. Calculate Totals
     const totalIncome = monthTx.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
     const totalExpense = monthTx.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
@@ -165,33 +165,33 @@ function renderDashboard() {
     const incEl = document.getElementById('total-income');
     const expEl = document.getElementById('total-expense');
     const pieEl = document.getElementById('pie-total-expense');
-    
-    if(incEl) incEl.innerText = `₹${totalIncome.toLocaleString()}`;
-    if(expEl) expEl.innerText = `₹${totalExpense.toLocaleString()}`;
-    if(pieEl) pieEl.innerText = `₹${totalExpense >= 1000 ? (totalExpense/1000).toFixed(1) + 'k' : totalExpense}`;
+
+    if (incEl) incEl.innerText = `₹${totalIncome.toLocaleString()}`;
+    if (expEl) expEl.innerText = `₹${totalExpense.toLocaleString()}`;
+    if (pieEl) pieEl.innerText = `₹${totalExpense >= 1000 ? (totalExpense / 1000).toFixed(1) + 'k' : totalExpense}`;
 
     // 3. Spending by Member
     const memberSpent = {};
     appData.members.forEach(m => memberSpent[m.id] = 0);
-    
+
     monthTx.filter(t => t.type === 'expense').forEach(t => {
-        if(memberSpent[t.memberId] !== undefined) {
+        if (memberSpent[t.memberId] !== undefined) {
             memberSpent[t.memberId] += t.amount;
         }
     });
 
     renderPieChart(memberSpent, totalExpense);
     renderMemberSpendingList(memberSpent, totalExpense);
-    
+
     // 4. Expenses by Category
     const categorySpent = {};
     EXPENSE_CATEGORIES.forEach(c => categorySpent[c] = 0);
-    
+
     monthTx.filter(t => t.type === 'expense').forEach(t => {
         if (categorySpent[t.category] !== undefined) {
-             categorySpent[t.category] += t.amount;
+            categorySpent[t.category] += t.amount;
         } else { // Categorize anything unknown as household to be safe, or add dynamic categories.
-            categorySpent[t.category] = t.amount; 
+            categorySpent[t.category] = t.amount;
         }
     });
 
@@ -202,7 +202,7 @@ function renderPieChart(memberSpent, totalExpense) {
     const svg = document.getElementById('spending-pie-chart');
     // Keep background circle
     svg.innerHTML = '<circle cx="18" cy="18" fill="transparent" r="16" stroke="#f1f5f9" stroke-width="4" class="dark:stroke-slate-800"></circle>';
-    
+
     if (totalExpense === 0) return;
 
     let cumulativePercentage = 0;
@@ -219,13 +219,13 @@ function renderPieChart(memberSpent, totalExpense) {
             circle.setAttribute("r", "16");
             circle.setAttribute("stroke", COLORS[colorIndex % COLORS.length]);
             circle.setAttribute("stroke-width", "4");
-            
+
             // Circumference of r=16 is 2 * pi * 16 ≈ 100.5. We use 100 in dasharray generally (approx)
             circle.setAttribute("stroke-dasharray", `${percentage} 100`);
             circle.setAttribute("stroke-dashoffset", `-${cumulativePercentage}`);
-            
+
             svg.appendChild(circle);
-            
+
             cumulativePercentage += percentage;
             colorIndex++;
         }
@@ -235,17 +235,17 @@ function renderPieChart(memberSpent, totalExpense) {
 function renderMemberSpendingList(memberSpent, totalExpense) {
     const container = document.getElementById('member-spending-list');
     container.innerHTML = '';
-    
+
     let colorIndex = 0;
 
     // Sort by spending descending, then alphabetically by name
-    const sortedMembers = appData.members.map(m => ({...m, spent: memberSpent[m.id] || 0}))
-        .sort((a,b) => b.spent !== a.spent ? b.spent - a.spent : a.name.localeCompare(b.name));
+    const sortedMembers = appData.members.map(m => ({ ...m, spent: memberSpent[m.id] || 0 }))
+        .sort((a, b) => b.spent !== a.spent ? b.spent - a.spent : a.name.localeCompare(b.name));
 
     sortedMembers.forEach(member => {
         const percentage = totalExpense > 0 ? ((member.spent / totalExpense) * 100).toFixed(1) : "0.0";
         const color = COLORS[colorIndex % COLORS.length];
-        
+
         const div = document.createElement('div');
         div.innerHTML = `
             <div class="flex justify-between text-sm mb-2">
@@ -272,8 +272,8 @@ function renderCategorySummary(categorySpent) {
     const activeCategories = Object.keys(categorySpent).map(key => ({
         name: key,
         amount: categorySpent[key]
-    })).filter(c => c.amount > 0).sort((a,b) => b.amount - a.amount);
-    
+    })).filter(c => c.amount > 0).sort((a, b) => b.amount - a.amount);
+
     if (activeCategories.length === 0) {
         container.innerHTML = '<p class="text-sm text-slate-400">No expenses recorded.</p>';
         return;
@@ -301,9 +301,9 @@ function renderMemberPage() {
 
     // Calculate totals for ALL time for this member (or we can filter by month if preferred, but usually member history is total until filtered. The UI didn't specify month filter on member page, I hid it, so let's do total).
     const memberTx = appData.transactions.filter(t => t.memberId === currentMemberId);
-    
+
     // Sort transactions by date descending
-    memberTx.sort((a,b) => new Date(b.date) - new Date(a.date));
+    memberTx.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     // Calculate All-Time & Current Year Stats
     const currentYear = new Date().getFullYear();
@@ -329,11 +329,11 @@ function renderMemberPage() {
     document.getElementById('member-total-income').innerText = `₹${totalIncome.toLocaleString()}`;
     document.getElementById('member-total-expense').innerText = `₹${totalExpense.toLocaleString()}`;
     document.getElementById('member-current-balance').innerText = `₹${balance.toLocaleString()}`;
-    
+
     const annualMemberIncEl = document.getElementById('annual-member-income');
     const annualMemberExpEl = document.getElementById('annual-member-expense');
-    if(annualMemberIncEl) annualMemberIncEl.innerText = `₹${annualIncome.toLocaleString()}`;
-    if(annualMemberExpEl) annualMemberExpEl.innerText = `₹${annualExpense.toLocaleString()}`;
+    if (annualMemberIncEl) annualMemberIncEl.innerText = `₹${annualIncome.toLocaleString()}`;
+    if (annualMemberExpEl) annualMemberExpEl.innerText = `₹${annualExpense.toLocaleString()}`;
 
     // Expense Alert Logic
     const alertBanner = document.getElementById('expense-alert-banner');
@@ -346,7 +346,7 @@ function renderMemberPage() {
     // Render Table
     const tbody = document.getElementById('transactions-tbody');
     tbody.innerHTML = '';
-    
+
     if (memberTx.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 text-sm">No transactions found.</td></tr>`;
         return;
@@ -355,13 +355,13 @@ function renderMemberPage() {
     // Calculate running balance per row (requires traversing chronological, which is reverse of our display array)
     // Actually, running balance means balance at that day.
     // Let's compute it:
-    let runningBalance = balance; 
-    
+    let runningBalance = balance;
+
     memberTx.forEach((t) => {
         const formattedDate = new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         const amountDisplay = t.type === 'income' ? `+₹${t.amount.toLocaleString()}` : `-₹${t.amount.toLocaleString()}`;
         const amountClass = t.type === 'income' ? 'text-emerald-600' : 'text-rose-500';
-        
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group';
         tr.innerHTML = `
@@ -384,13 +384,13 @@ function renderMemberPage() {
             </td>
         `;
         tbody.appendChild(tr);
-        
+
         // Reverse running balance for the next row down (older transaction)
         runningBalance = t.type === 'income' ? runningBalance - t.amount : runningBalance + t.amount;
     });
 }
 
-window.editTransaction = function(txId) {
+window.editTransaction = function (txId) {
     const tx = appData.transactions.find(t => t.id === txId);
     if (!tx) return;
 
@@ -406,12 +406,12 @@ window.editTransaction = function(txId) {
     // Change button text and scroll up
     const submitBtn = document.getElementById('submit-tx-btn');
     if (submitBtn) submitBtn.innerText = 'Update Transaction';
-    
+
     // Smooth scroll to top to ensure user sees the form
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.deleteTransaction = function(txId) {
+window.deleteTransaction = function (txId) {
     if (confirm("Are you sure you want to delete this transaction?")) {
         appData.transactions = appData.transactions.filter(t => t.id !== txId);
         saveData();
@@ -419,10 +419,10 @@ window.deleteTransaction = function(txId) {
     }
 };
 
-window.editMemberName = function(memberId) {
+window.editMemberName = function (memberId) {
     const member = appData.members.find(m => m.id === memberId);
     if (!member) return;
-    
+
     const newName = prompt("Enter new name for " + member.name + ":", member.name);
     if (newName && newName.trim() !== "") {
         member.name = newName.trim();
@@ -431,19 +431,19 @@ window.editMemberName = function(memberId) {
     }
 };
 
-window.deleteMember = function(memberId) {
+window.deleteMember = function (memberId) {
     const member = appData.members.find(m => m.id === memberId);
     if (!member || member.isHead) return; // Cannot delete head
-    
+
     if (confirm(`Are you sure you want to completely remove ${member.name} and all their transactions? This action cannot be undone.`)) {
         // Remove member
         appData.members = appData.members.filter(m => m.id !== memberId);
-        
+
         // Remove their transactions
         appData.transactions = appData.transactions.filter(t => t.memberId !== memberId);
-        
+
         saveData();
-        
+
         // If we sequence a delete from the member's own page, redirect home
         if (currentPage === 'member' && currentMemberId === memberId) {
             window.location.href = 'index.html';
@@ -492,7 +492,7 @@ function setupEventListeners() {
             closeForm();
         }
     });
-    
+
     // Change Head of Family
     const headSelect = document.getElementById('head-of-family-select');
     if (headSelect) {
@@ -507,7 +507,7 @@ function setupEventListeners() {
 
     // Month Filter
     const monthFilter = document.getElementById('month-filter');
-    if(monthFilter) {
+    if (monthFilter) {
         monthFilter.addEventListener('change', (e) => {
             currentMonth = parseInt(e.target.value);
             renderDashboard(); // Re-render numbers based on new month
@@ -520,27 +520,27 @@ function setupEventListeners() {
         if (addTxForm) {
             addTxForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 const date = document.getElementById('tx-date').value;
                 const desc = document.getElementById('tx-desc').value.trim();
                 const category = document.getElementById('tx-category').value;
                 const type = document.getElementById('tx-type').value;
                 const amount = parseFloat(document.getElementById('tx-amount').value);
-                
+
                 if (date && desc && category && type && !isNaN(amount)) {
-                    
+
                     // --- New Balance Validation Logic ---
                     if (type === 'expense') {
                         // Calculate current working balance for this member
                         const mTx = appData.transactions.filter(t => t.memberId === currentMemberId);
                         let inc = 0, exp = 0;
-                        mTx.forEach(t => { 
+                        mTx.forEach(t => {
                             // Exclude the transaction we are currently editing from the math
-                            if(t.id === editingTransactionId) return; 
-                            if(t.type === 'income') inc += t.amount; else exp += t.amount; 
+                            if (t.id === editingTransactionId) return;
+                            if (t.type === 'income') inc += t.amount; else exp += t.amount;
                         });
                         const currentBalance = inc - exp;
-                        
+
                         if (amount > currentBalance) {
                             alert("Insufficient Balance: Expense exceeds available funds.");
                             return; // Stop transaction
@@ -580,7 +580,7 @@ function setupEventListeners() {
                             amount: amount
                         });
                     }
-                    
+
                     saveData();
                     renderAll();
                     addTxForm.reset();
@@ -598,7 +598,7 @@ function setupEventListeners() {
                 const member = appData.members.find(m => m.id === currentMemberId);
                 const currentAlert = member.alertThreshold || "";
                 const newAlertStr = prompt(`Set Expense Alert Threshold for ${member.name} (in ₹):`, currentAlert);
-                
+
                 if (newAlertStr !== null) {
                     const newAlert = parseFloat(newAlertStr);
                     if (!isNaN(newAlert) && newAlert >= 0) {
