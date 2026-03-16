@@ -10,7 +10,7 @@ View the live application here: [Live Demo](https://income-expense-tracker-brown
 * **Family Summaries**: Real-time aggregation of Total Monthly Income, Total Monthly Expense, Annual Family Income, and Annual Family Expense.
 * **Dynamic Distribution**: Visual pie chart representing the proportional spending of each family member.
 * **Category Breakdown**: Automatic categorization of expenses (Food, Household, Transport, Medical, etc.) for deeper insights.
-* **Monthly Filtering**: Instantly filter the entire dashboard view by specific months to review historical performance.
+* **Monthly Filtering**: Instantly filter the entire dashboard view by specific months to review historical performance for each member and for the whole family too.
 
 ### Individual Member Tracking
 * **Dedicated Dashboards**: Each family member has an isolated view tracking their specific transaction history, annual totals, and current working balance.
