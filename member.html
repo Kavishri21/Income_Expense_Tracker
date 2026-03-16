@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Member Transactions - Family Tracker</title>
+    
+    <!-- External Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS (via CDN as per request) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7311d4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Application Logic -->
+    <script src="script.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100" data-page="member">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 z-20">
+            <div class="p-6 flex flex-col gap-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined">account_balance_wallet</span>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 dark:text-white leading-tight">Family Tracker</h1>
+                        <p class="text-xs text-slate-500">Income & Expense</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto" id="sidebar-nav">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="index.html" id="nav-home">
+                    <span class="material-symbols-outlined">home</span>
+                    <span class="text-sm">Home</span>
+                </a>
+                
+                <!-- Dynamic Members List Container -->
+                <div id="members-list">
+                    <!-- Members will be injected here via JS -->
+                </div>
+                
+                <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button id="add-member-btn" class="flex items-center gap-3 px-3 py-2 w-full text-slate-500 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">person_add</span>
+                        <span class="text-sm font-medium">+ Add Member</span>
+                    </button>
+                    <!-- Add Member Form (Hidden by default) -->
+                    <div id="add-member-form" class="hidden mt-2 px-2">
+                        <input type="text" id="new-member-name" placeholder="Name" class="w-full text-sm px-3 py-2 border rounded-md dark:bg-slate-800 dark:border-slate-700 outline-none focus:border-primary mb-2">
+                        <div class="flex gap-2">
+                            <button id="save-member-btn" class="flex-1 bg-primary text-white text-xs py-1.5 rounded hover:bg-primary/90">Save</button>
+                            <button id="cancel-member-btn" class="flex-1 bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-xs py-1.5 rounded hover:bg-slate-300 dark:hover:bg-slate-600">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3 p-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-500">
+                        <span class="material-symbols-outlined text-xl">person</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold truncate head-of-family-name-display">Loading...</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider">Head of Family</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 px-8 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-slate-400 text-sm font-medium">Members</span>
+                    <span class="material-symbols-outlined text-sm text-slate-400">chevron_right</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200" id="header-member-name">Loading...</span>
+                    <!-- Re-using logic to change head of family globally if they wish here too -->
+                    <div class="ml-8 hidden lg:flex items-center gap-2 relative group">
+                         <label for="head-of-family-select" class="text-xs text-slate-500 font-medium">Head of Family:</label>
+                         <select id="head-of-family-select" class="bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-xs rounded-lg px-2 py-1 outline-none focus:border-primary">
+                             <!-- Options injected via JS -->
+                         </select>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                     <!-- Month Filter applied to Member Page too for consistency -->
+                     <select id="month-filter" class="bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-sm font-semibold rounded-lg px-4 py-2 outline-none focus:border-primary shadow-sm hidden">
+                         <!-- Hidden on Member Page, defaulting to show all history initially, or we can make it active. Let's make it active later if needed in JS. -->
+                     </select>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark relative">
+                
+                <!-- Alert Banner -->
+                <div id="expense-alert-banner" class="hidden mb-4 bg-rose-100 border border-rose-300 text-rose-800 px-4 py-3 rounded-lg flex justify-between items-center w-full">
+                   <div class="flex items-center gap-2">
+                       <span class="material-symbols-outlined text-rose-600">warning</span>
+                       <span class="font-bold">⚠️ Expense limit reached!</span>
+                   </div>
+                </div>
+
+                <!-- Title and Action Bar -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white" id="page-title-name">Member - Transactions</h2>
+                        <p class="text-slate-500 mt-1 font-medium">Detailed financial activity and history.</p>
+                    </div>
+                    <button id="set-alert-btn" class="bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-sm">notifications_active</span>
+                        <span>Set Expense Alert</span>
+                    </button>
+                </div>
+
+                <!-- Annual Cards (New) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl shadow-md text-white">
+                        <div class="flex items-center gap-3 mb-2 opacity-90">
+                            <span class="material-symbols-outlined bg-white/20 p-2 rounded-lg">payments</span>
+                        </div>
+                        <p class="text-sm font-semibold uppercase tracking-wider opacity-90">Annual Member Income</p>
+                        <p class="text-4xl font-black tracking-tight mt-1" id="annual-member-income">₹0</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-rose-500 to-rose-600 p-6 rounded-2xl shadow-md text-white">
+                        <div class="flex items-center gap-3 mb-2 opacity-90">
+                            <span class="material-symbols-outlined bg-white/20 p-2 rounded-lg">receipt_long</span>
+                        </div>
+                        <p class="text-sm font-semibold uppercase tracking-wider opacity-90">Annual Member Expense</p>
+                        <p class="text-4xl font-black tracking-tight mt-1" id="annual-member-expense">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1">
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Income</p>
+                        <p class="text-3xl font-black text-emerald-600 tracking-tight mt-2" id="member-total-income">₹0</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1">
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Total Expenses</p>
+                        <p class="text-3xl font-black text-rose-500 tracking-tight mt-2" id="member-total-expense">₹0</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-transform hover:-translate-y-1">
+                        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Current Balance</p>
+                        <p class="text-3xl font-black text-primary tracking-tight mt-2" id="member-current-balance">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Full Width Add Transaction Form -->
+                <div class="mb-8 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 w-full">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Add Transaction</h3>
+                    <form id="add-transaction-form" class="flex flex-col lg:flex-row gap-4 items-end">
+                        
+                        <div class="flex-1 w-full relative">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Date</label>
+                            <span class="material-symbols-outlined absolute left-3 top-[30px] text-slate-400 text-lg">calendar_today</span>
+                            <input id="tx-date" class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/50 outline-none" type="date" required/>
+                        </div>
+
+                        <div class="flex-1 w-full">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Description</label>
+                            <input id="tx-desc" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/50 outline-none" type="text" placeholder="e.g. Groceries" required/>
+                        </div>
+
+                        <div class="flex-1 w-full">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Category</label>
+                            <select id="tx-category" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/50 outline-none" required>
+                                <option value="Food">Food</option>
+                                <option value="Household">Household</option>
+                                <option value="Transport">Transport</option>
+                                <option value="School / College Fees">School / College Fees</option>
+                                <option value="Electricity">Electricity</option>
+                                <option value="Bank (Insurance / EMI / Loan)">Bank (Insurance / EMI / Loan)</option>
+                                <option value="Medical">Medical</option>
+                                <option value="Salary">Salary</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        
+                        <div class="w-full lg:w-32">
+                             <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Type</label>
+                             <select id="tx-type" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/50 outline-none font-bold" required>
+                                 <option value="expense" class="text-rose-500">Expense</option>
+                                 <option value="income" class="text-emerald-500">Income</option>
+                             </select>
+                        </div>
+
+                        <div class="flex-1 w-full relative">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Amount</label>
+                            <span class="absolute left-3 top-[30px] font-bold text-slate-400">₹</span>
+                            <input id="tx-amount" class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg text-sm font-bold focus:ring-2 focus:ring-primary/50 outline-none" type="number" min="0" step="0.01" placeholder="0.00" required/>
+                        </div>
+
+                        <button id="submit-tx-btn" type="submit" class="w-full lg:w-auto bg-primary hover:bg-primary/90 text-white font-bold px-6 py-2 rounded-lg shadow-md transition-all h-[38px] flex items-center justify-center gap-2">
+                           Add Transaction
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Transaction Table -->
+                <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-12">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-32">Date</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Description</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-48">Category</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-32">Amount</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-32 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-32 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50" id="transactions-tbody">
+                                <!-- Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
